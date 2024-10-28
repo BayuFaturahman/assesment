@@ -1,6 +1,5 @@
 package com.example.assesment.domain
 
-import android.util.Log
 import com.example.assesment.data.model.CartProduct
 import com.example.assesment.data.model.Product
 import com.example.assesment.data.model.User
