@@ -35,16 +35,20 @@ class CartViewModel(
             _cartState.value = _cartState.value.copy(isLoading = true)
             try {
                 val listItemCurrent = getCartByUserUseCase(id).toMutableList()
-
+                var productDetails:List<Product> = emptyList()
                 for (item in listItemCurrent) {
-                    val productDetails = item.products.map { product ->
-                        async { getProductDetailUseCase(product.productId.toString()) }
-                    }.awaitAll()
+                     productDetails = item.products.map { product ->
+                         async {
 
-                    _cartState.value = _cartState.value.copy(
-                        listProductCart = productDetails
-                    )
+                             getProductDetailUseCase(product.productId.toString()) }
+                     }.awaitAll()
+
+
+
                 }
+                _cartState.value = _cartState.value.copy(
+                    listProductCart = productDetails
+                )
 
                 _cartState.value = _cartState.value.copy(
                     isLoading = false,

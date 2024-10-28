@@ -16,6 +16,7 @@ class GetProductsUseCase(private val apiService: ApiService) {
 
 class GetProductDetailUseCase(private val apiService: ApiService) {
     suspend operator fun invoke(id:String): Product {
+
         return apiService.getProductsDetail(id =id)
     }
 }

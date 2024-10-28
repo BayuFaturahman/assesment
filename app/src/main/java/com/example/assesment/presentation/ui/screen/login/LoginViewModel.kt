@@ -11,16 +11,17 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
     val loginResult = MutableLiveData<Result<String>>()
-    fun login(username: String, password: String,context: Context) {
 
+    fun login(username: String, password: String,context: Context) {
         viewModelScope.launch {
           val  preferencesManager = PreferencesManager(context)
-
             val result = authRepository.login(username, password)
             loginResult.value = result
             preferencesManager.saveData(R.string.key_token.toString(),loginResult.value.toString())
         }
     }
+
+
 
 
 }

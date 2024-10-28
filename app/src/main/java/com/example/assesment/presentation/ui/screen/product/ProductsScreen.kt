@@ -103,76 +103,78 @@ fun ProductScreen(navHostController: NavHostController,productsViewModel: Produc
     ){
             innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
-           BaseHomeUI (
-               name = if(state.isLoadingUser) { "" } else {state.user?.name?.firstname.toString()},
-               navController = NavHostController(LocalContext.current),
-               onLogout = {
-                   isDialogLogout = true
-               },
-               content = {
-                   if (!state.isLoading){
-                       LazyRow {
-                           items(state.listCategories) { category ->
-                               Box(
-                                   modifier = Modifier
-                                       .padding(horizontal = 10.dp)
-                                       .background(color =if (isChoiceCategory == category) primary else Color.White) // Add a background color for better border visibility
-                                       .border(
-                                           width = 1.5.dp, // Border width
-                                           color = if (isChoiceCategory == category) primary else black, // Border color
-                                           shape = RoundedCornerShape(4.dp) // Border corner radius
-                                       ),
-                                   contentAlignment = Alignment.Center
-                               ) {
-                                   Text(
-                                       text = category.toUpperCase(Locale.ROOT),
-                                       fontSize = 14.sp,
-                                       color = if (isChoiceCategory == category) white else black,
-                                       fontWeight = if (isChoiceCategory == category) FontWeight.Bold else FontWeight.Normal,
-                                       textAlign = TextAlign.Center,
-                                       modifier = Modifier.width(140.dp).padding(vertical = 10.dp).clickable {
-                                           isChoiceCategory = category
-                                           if(category == "All"){
-                                               productsViewModel.getProduct()
-                                           }else{
-                                               productsViewModel.getProductByCategories(category)
+            state.user?.let {
+                BaseHomeUI (
+                    user = it,
+                    navController = NavHostController(LocalContext.current),
+                    onLogout = {
+                        isDialogLogout = true
+                    },
+                    content = {
+                        if (!state.isLoading){
+                            LazyRow {
+                                items(state.listCategories) { category ->
+                                    Box(
+                                        modifier = Modifier
+                                            .padding(horizontal = 10.dp)
+                                            .background(color =if (isChoiceCategory == category) primary else Color.White) // Add a background color for better border visibility
+                                            .border(
+                                                width = 1.5.dp, // Border width
+                                                color = if (isChoiceCategory == category) primary else black, // Border color
+                                                shape = RoundedCornerShape(4.dp) // Border corner radius
+                                            ),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = category.toUpperCase(Locale.ROOT),
+                                            fontSize = 14.sp,
+                                            color = if (isChoiceCategory == category) white else black,
+                                            fontWeight = if (isChoiceCategory == category) FontWeight.Bold else FontWeight.Normal,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.width(140.dp).padding(vertical = 10.dp).clickable {
+                                                isChoiceCategory = category
+                                                if(category == "All"){
+                                                    productsViewModel.getProduct()
+                                                }else{
+                                                    productsViewModel.getProductByCategories(category)
 
-                                           }
+                                                }
 
-                                       }
-                                   )
-                               }
-                           }
-                       }
-                   }
-                   if (state.isLoadingProduct) {
-                       Box(modifier = Modifier.padding(top = 50.dp)) {
-                           ProductsLoading()
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        if (state.isLoadingProduct) {
+                            Box(modifier = Modifier.padding(top = 50.dp)) {
+                                ProductsLoading()
 
-                       }
-                   } else {
-                       LazyVerticalGrid(
-                           columns = GridCells.Fixed(2),
-                           content = {
-                               items(state.listProducts.size, key = { i -> state.listProducts[i].id } ) { index ->
-                                   val data = state.listProducts[index]
-                                   Box(
-                                       modifier = Modifier.padding(
-                                           start = if (index % 2 == 1) 6.dp else 0.dp,
-                                           end = if (index % 2 == 0) 6.dp else 0.dp,
-                                           bottom = 16.dp
-                                       )
-                                   ) {
-                                       ProductItem(
-                                       data, state.user?.id.toString(),navHostController);
-                                   }
-                               }
-                           },
-                           modifier = Modifier.fillMaxHeight().padding(top = 50.dp)// Avoid wrapContentHeight to prevent performance issues
-                       )
-                   }
-               }
-           )
+                            }
+                        } else {
+                            LazyVerticalGrid(
+                                columns = GridCells.Fixed(2),
+                                content = {
+                                    items(state.listProducts.size, key = { i -> state.listProducts[i].id } ) { index ->
+                                        val data = state.listProducts[index]
+                                        Box(
+                                            modifier = Modifier.padding(
+                                                start = if (index % 2 == 1) 6.dp else 0.dp,
+                                                end = if (index % 2 == 0) 6.dp else 0.dp,
+                                                bottom = 16.dp
+                                            )
+                                        ) {
+                                            ProductItem(
+                                                data, state.user?.id.toString(),navHostController);
+                                        }
+                                    }
+                                },
+                                modifier = Modifier.fillMaxHeight().padding(top = 50.dp)// Avoid wrapContentHeight to prevent performance issues
+                            )
+                        }
+                    }
+                )
+            }
             }
 
         }
@@ -181,7 +183,7 @@ fun ProductScreen(navHostController: NavHostController,productsViewModel: Produc
 
 fun Double.convert(): String {
     val format: NumberFormat = NumberFormat.getCurrencyInstance(Locale.US)
-    format.maximumFractionDigits = 2
+    format.maximumFractionDigits = 0
     return format.format(this)
 }
 @Composable
